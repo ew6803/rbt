@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
+#include <fstream>
 
 using namespace std;
 
@@ -24,9 +25,26 @@ Node* addNode(Node* head, Node* point) {
   return head; 
 }
 
+void updateTree(Node* &root, Node* &pt) {
 
-void printTree() {
+}
 
+void printTree(Node* head, int format) {
+  if (head == NULL) 
+    return; 
+  format += 10;
+  printTree(head -> getRight(), format);
+  cout << '\n';
+  for (int i = 10; i < format; i++)
+    cout << " ";
+  if (head -> getColor() == 1) {
+    cout << "Red: " << head -> getData(); 
+  }
+  else {
+    cout << "Black: " << head -> getData(); 
+  }
+      printTree(head -> getLeft(), format); 
+  
 }
 
 int main() {
@@ -70,7 +88,12 @@ int main() {
     
   }
   else if (strcmp(input, "PRINT") == 0) {
-
+    if (head == NULL) {
+      cout << "Can't Print Nothing \n";
+    }
+    else {
+      printTree(head, 0); 
+    }
   }
   else if (strcmp(input, "EXIT") == 0) {
     running = false; 
