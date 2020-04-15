@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
+#include <fstream>
 
 using namespace std;
 
@@ -45,6 +46,29 @@ int main() {
     Node* point = new Node();
     point -> setData(input2);
     head = addNode(head, point);
+  }
+  else if (strcmp(input, "READ") == 0) {
+    int counter = 0;
+    int* array = new int[1000];
+    char* name = new char[50];
+    cout << "File Name? \n";
+    cin.getline(name, 50);
+    ifstream inFile;
+    inFile.open(name);
+    char* input3 = new char[400];
+    inFile.getline(input3, 400);
+    char* token = strtok(input3, ",");
+    while(token != NULL) {
+      array[counter] = atoi(token);
+      token = strtok(NULL, ", ");
+      counter++;
+    }
+    for (int i = 0; i < counter; i++) {
+      Node* point = new Node();
+      point -> setData(array[i]);
+      head = addNode(head, point);
+    }
+    
   }
   else if (strcmp(input, "PRINT") == 0) {
 
