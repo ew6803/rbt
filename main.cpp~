@@ -1,4 +1,6 @@
-//asfafsa
+//This program is a red black tree, a self balancing data structure tree. User can add by console or file and print the tree. 
+//Because the Cygwin command line is black, this tree is technically "Red White Tree", white numbers will represent black ones.
+//Ethan Wang
 
 #include "Node.h"
 #include <iostream>
@@ -9,44 +11,12 @@
 
 using namespace std;
 
-Node* addNode(Node* head, Node* point) {
-  if (head == NULL) {
-    return point; 
-  }
-  else if (head -> getData() >= point -> getData()) {
-    head -> setLeft(addNode(head-> getLeft(), point));
-    head-> getLeft() -> setParent(head); 
-
-  }
-  else if (head -> getData() < point -> getData()) {
-    head -> setRight(addNode(head ->getRight(), point));
-    head -> getRight()-> setParent(head); 
-  }
-  return head; 
-}
-
-void updateTree(Node* &root, Node* &pt) {
-
-}
-
-void printTree(Node* head, int format) {
-  if (head == NULL) 
-    return; 
-  format += 10;
-  printTree(head -> getRight(), format);
-  cout << '\n';
-  for (int i = 10; i < format; i++)
-    cout << " ";
-  if (head -> getColor() == 1) {
-    cout << "Red: " << head -> getData(); 
-  }
-  else {
-    cout << "Black: " << head -> getData(); 
-  }
-      printTree(head -> getLeft(), format); 
-  
-}
-
+Node* ADD(Node* head, Node* nNode);
+void RLEFT(Node *&root, Node *&nNode);
+void RRIGHT(Node *&root, Node *&nNode);
+void UPDATE(Node *&root, Node *&nNode);
+void PRINT(Node* head, int format);
+//MainLine Function Caller
 int main() {
   bool running = true;
   char* input = new char[30];
@@ -54,7 +24,7 @@ int main() {
   Node* head = NULL; 
   while (running == true) {
   cout << "Hello, welcome to red black tree, this has become the bane of my existence. \nBSD, pass fail grading please. \n";
-  cout << "You can do many things with this tree that is red and black. You can ADD, you can PRINT, you can EXIT. That is all. \n";
+  cout << "You can do many things with this tree that is red and black. You can ADD, you can READ, you can PRINT, you can EXIT. That is all. \n";
   cin.getline(input, 30);
   if (strcmp(input, "ADD") == 0) {
     cout << "What number do you want to add \n";
@@ -62,8 +32,10 @@ int main() {
     cin.get();
     Node* point = new Node();
     point -> setData(input2);
-    head = addNode(head, point);
+    head = ADD(head, point);
+    UPDATE(head, point); 
   }
+  //Input through file, I didnt feel like this needed a function because its the same process of add just repeated
   else if (strcmp(input, "READ") == 0) {
     int counter = 0;
     int* array = new int[1000];
@@ -83,7 +55,8 @@ int main() {
     for (int i = 0; i < counter; i++) {
       Node* point = new Node();
       point -> setData(array[i]);
-      head = addNode(head, point);
+      head = ADD(head, point);
+      UPDATE(head, point); 
     }
     
   }
@@ -92,7 +65,8 @@ int main() {
       cout << "Can't Print Nothing \n";
     }
     else {
-      printTree(head, 0); 
+      PRINT(head, 0);
+      cout << "\n";
     }
   }
   else if (strcmp(input, "EXIT") == 0) {
@@ -104,3 +78,136 @@ int main() {
   }
   return 0; 
 }
+//Add node through console
+Node* ADD(Node* head, Node* nNode) {
+  if (head == NULL) {
+    return nNode; 
+  }
+  else if (head -> getData() >= nNode -> getData()) {
+    head -> setLeft(ADD(head-> getLeft(), nNode));
+    head-> getLeft() -> setParent(head); 
+
+  }
+  else if (head -> getData() < nNode -> getData()) {
+    head -> setRight(ADD(head ->getRight(), nNode));
+    head -> getRight()-> setParent(head); 
+  }
+  return head; 
+}
+
+//Print out the tree
+void PRINT(Node* head, int format) {
+  if (head == NULL) 
+    return; 
+  format = format + 5;
+  PRINT(head -> getRight(), format);
+  cout << '\n';
+  for (int i = 5; i < format; i++)
+    cout << " ";
+  if (head -> getColor() == 1) {
+    cout << "\033[1;31m" << head -> getData() << "\033[0m"; 
+  }
+  else {
+    cout << head -> getData(); 
+  }
+      PRINT(head -> getLeft(), format); 
+  
+}
+
+//Left Rotation 
+void RLEFT(Node *&root, Node *&nNode) {
+  Node *right = nNode -> getRight();
+  nNode -> setRight(right -> getLeft());
+  if (nNode-> getRight() != NULL) {
+    nNode -> getRight() -> setParent(nNode); 
+  }
+  right -> setParent(nNode -> getParent());
+  if (nNode -> getParent() == NULL) {
+    root = right;
+  }
+  else if (nNode == nNode->getParent() -> getLeft()) {
+    nNode -> getParent() -> setLeft(right); 
+  }
+  else {
+    nNode -> getParent() -> setRight(right);
+  }
+  right -> setLeft(nNode);
+  nNode -> setParent(right);
+}
+
+//Right Rotation
+void RRIGHT(Node *&root, Node *&nNode) {
+  Node *left = nNode -> getLeft();
+  nNode -> setLeft(left-> getRight());
+  if (nNode-> getLeft() != NULL) {
+    nNode -> getLeft() -> setParent(nNode);
+  }
+  left -> setParent(nNode -> getParent());
+  if (nNode -> getParent() == NULL) {
+    root = left;
+  }
+  else if (nNode == nNode -> getParent() -> getLeft()) {
+    nNode -> getParent() -> setLeft(left); 
+  }
+  else {
+    nNode -> getParent() -> setRight(left); 
+  }
+  left -> setRight(nNode);
+  nNode -> setParent(left); 
+}
+
+//Updates and fixes tree after every addition
+void UPDATE(Node *&root, Node *&nNode) {
+  Node *parent = NULL;
+  Node *gParent = NULL;
+  while ((nNode != root) && (nNode -> getColor() != 2) && (nNode -> getParent() -> getColor() == 1)) {
+  parent = nNode -> getParent();
+  gParent = nNode -> getParent() -> getParent();
+  if (parent == gParent -> getLeft()) {
+    Node* uncle = gParent -> getRight();
+  if (uncle != NULL && uncle -> getColor() == 1) {
+    gParent -> setColor(1);
+    parent -> setColor(2);
+    uncle -> setColor(2);
+    nNode = gParent; 
+}
+  else {
+    if (nNode == parent -> getRight()) {
+      RLEFT(root, parent); 
+      nNode = parent;
+      parent = nNode -> getParent();
+    }
+    RRIGHT(root, gParent); 
+    int parentcolor = parent -> getColor();
+    int grandcolor = gParent -> getColor();
+    parent -> setColor(grandcolor);
+    gParent -> setColor(parentcolor);
+    nNode = parent;
+  }
+}
+ else {
+   Node *uncle = gParent -> getLeft();
+   if ((uncle != NULL) && (uncle -> getColor() == 1)){
+     gParent -> setColor(1);
+     parent -> setColor(2);
+     uncle -> setColor(2);
+     nNode = gParent;
+   }
+   else {
+     if (nNode == parent -> getLeft()) {
+       RRIGHT(root, parent); 
+       nNode = parent; 
+       parent = nNode -> getParent();
+     }
+     RLEFT(root, gParent); 
+     int parentcolor = parent -> getColor();
+     int grandcolor = gParent -> getColor();
+     parent -> setColor(grandcolor);
+     gParent -> setColor(parentcolor);
+     nNode = parent;
+   }
+ }
+}
+  root -> setColor(2); 
+}
+
