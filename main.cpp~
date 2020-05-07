@@ -11,11 +11,14 @@
 
 using namespace std;
 
+bool SEARCH(Node* root, int number);
+void DELETE(Node *&root, int number); 
 Node* ADD(Node* head, Node* nNode);
 void RLEFT(Node *&root, Node *&nNode);
 void RRIGHT(Node *&root, Node *&nNode);
 void UPDATE(Node *&root, Node *&nNode);
 void PRINT(Node* head, int format);
+
 //MainLine Function Caller
 int main() {
   bool running = true;
@@ -24,7 +27,7 @@ int main() {
   Node* head = NULL; 
   while (running == true) {
   cout << "Hello, welcome to red black tree, this has become the bane of my existence. \nBSD, pass fail grading please. \n";
-  cout << "You can do many things with this tree that is red and black. You can ADD, you can READ, you can PRINT, you can EXIT. That is all. \n";
+  cout << "You can do many things with this tree that is red and black. You can ADD, you can READ, you can SEARCH, you can DELETE, you can PRINT, you can EXIT. That is all. \n";
   cin.getline(input, 30);
   if (strcmp(input, "ADD") == 0) {
     cout << "What number do you want to add \n";
@@ -68,6 +71,12 @@ int main() {
       PRINT(head, 0);
       cout << "\n";
     }
+  }
+  else if (strcmp(input, "DELETE") == 0) {
+
+  }
+  else if (strcmp(input, "SEARCH") == 0) {
+
   }
   else if (strcmp(input, "EXIT") == 0) {
     running = false; 
@@ -211,3 +220,10 @@ void UPDATE(Node *&root, Node *&nNode) {
   root -> setColor(2); 
 }
 
+bool SEARCH(Node* root, int number) {
+
+}
+
+void DELETE(Node*& root, int number) {
+
+}

@@ -1,4 +1,4 @@
-//This program is a red black tree, a self balancing data structure tree. User can add by console or file and print the tree. 
+//This program is a red black tree, a self balancing data structure tree. User can add by console or file, print the tree, search certain parts of the tree, or delete parts of the tree.  
 //Because the Cygwin command line is black, this tree is technically "Red White Tree", white numbers will represent black ones.
 //Ethan Wang
 
