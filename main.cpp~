@@ -178,10 +178,10 @@ void UPDATE(Node *&root, Node *&nNode) {
       parent = nNode -> getParent();
     }
     RRIGHT(root, gParent); 
-    int parentcolor = parent -> getColor();
-    int grandcolor = gParent -> getColor();
-    parent -> setColor(grandcolor);
-    gParent -> setColor(parentcolor);
+    int pcolor = parent -> getColor();
+    int gcolor = gParent -> getColor();
+    parent -> setColor(gcolor);
+    gParent -> setColor(pcolor);
     nNode = parent;
   }
 }
@@ -200,10 +200,10 @@ void UPDATE(Node *&root, Node *&nNode) {
        parent = nNode -> getParent();
      }
      RLEFT(root, gParent); 
-     int parentcolor = parent -> getColor();
-     int grandcolor = gParent -> getColor();
-     parent -> setColor(grandcolor);
-     gParent -> setColor(parentcolor);
+     int pcolor = parent -> getColor();
+     int gcolor = gParent -> getColor();
+     parent -> setColor(gcolor);
+     gParent -> setColor(pcolor);
      nNode = parent;
    }
  }
