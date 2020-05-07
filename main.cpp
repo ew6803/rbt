@@ -73,10 +73,24 @@ int main() {
     }
   }
   else if (strcmp(input, "DELETE") == 0) {
-
+    int number = 0; 
+    cout << "Which number do you want to delete? \n";
+    cin >> number;
+    cin.get();
+    cout << "Deleted \n";
+    DELETE(head, number); 
   }
   else if (strcmp(input, "SEARCH") == 0) {
-
+    int number = 0; 
+    cout << "Which number do you want to search for? \n";
+    cin >> number;
+    cin.get();
+    if (SEARCH(head, number)) {
+      cout << "There is this number in the tree \n"; 
+    }
+    else {
+      cout << "There is not this number in the tree \n"; 
+    }
   }
   else if (strcmp(input, "EXIT") == 0) {
     running = false; 
@@ -221,7 +235,20 @@ void UPDATE(Node *&root, Node *&nNode) {
 }
 
 bool SEARCH(Node* root, int number) {
-
+  if (root != NULL) {
+    if (root -> getData() == number) {
+      return true; 
+    }
+    else if (root -> getData() > number) {
+      return true;  
+    }
+    else {
+      if(SEARCH(root -> getRight(), number)) {
+	return true; 
+      }
+    }
+  }
+  return false; 
 }
 
 void DELETE(Node*& root, int number) {
