@@ -18,6 +18,7 @@ void RLEFT(Node *&root, Node *&nNode);
 void RRIGHT(Node *&root, Node *&nNode);
 void UPDATE(Node *&root, Node *&nNode);
 void PRINT(Node* head, int format);
+Node* FIND(Node* root, int number);
 
 //MainLine Function Caller
 int main() {
@@ -235,9 +236,38 @@ void UPDATE(Node *&root, Node *&nNode) {
 }
 
 bool SEARCH(Node* root, int number) {
+  if (root != NULL) {
+    if (root -> getData() == number) {
+      return true; 
+    }
+    else if (root -> getData() > number) {
+      return true;  
+    }
+    else {
+      if(SEARCH(root -> getRight(), number)) {
+	return true; 
+      }
+    }
+  }
+  return false; 
+}
 
+Node* FIND(Node* root, int number) {
+  if (root -> getData() == number) {
+    return root; 
+  }
+  else if (root -> getData() > number) {
+    return FIND(root -> getLeft(), number); 
+  }
+  else {
+    return FIND(root -> getRight(), number); 
+  }
+  return NULL; 
 }
 
 void DELETE(Node*& root, int number) {
-
+  if (search(root, number) == false) {
+    cout << "There is not this number in the tree";
+    return; 
 }
+ 
