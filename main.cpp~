@@ -14,11 +14,19 @@ using namespace std;
 bool SEARCH(Node* root, int number);
 void DELETE(Node *&root, int number); 
 Node* ADD(Node* head, Node* nNode);
-void RLEFT(Node *&root, Node *&nNode);
-void RRIGHT(Node *&root, Node *&nNode);
+void RLEFT(Node *&root, Node *nNode);
+void RRIGHT(Node *&root, Node *nNode);
 void UPDATE(Node *&root, Node *&nNode);
 void PRINT(Node* head, int format);
 Node* FIND(Node* root, int number);
+void REPLACE(Node *&node, Node *child);
+Node* GETS(Node* node); 
+void O0(Node *&root, Node *node);
+void O1(Node *&root, Node *node); 
+void O2(Node *&root, Node *node);
+void O3(Node *&root, Node *node); 
+void O4(Node *&root, Node *node); 
+void O5(Node *&root, Node *node); 
 
 //MainLine Function Caller
 int main() {
@@ -139,7 +147,7 @@ void PRINT(Node* head, int format) {
 }
 
 //Left Rotation 
-void RLEFT(Node *&root, Node *&nNode) {
+void RLEFT(Node *&root, Node *nNode) {
   Node *right = nNode -> getRight();
   nNode -> setRight(right -> getLeft());
   if (nNode-> getRight() != NULL) {
@@ -160,7 +168,7 @@ void RLEFT(Node *&root, Node *&nNode) {
 }
 
 //Right Rotation
-void RRIGHT(Node *&root, Node *&nNode) {
+void RRIGHT(Node *&root, Node *nNode) {
   Node *left = nNode -> getLeft();
   nNode -> setLeft(left-> getRight());
   if (nNode-> getLeft() != NULL) {
@@ -252,6 +260,94 @@ bool SEARCH(Node* root, int number) {
   return false; 
 }
 
+Node* GETS(Node* node) {
+  Node* sib = node -> getParent();
+  if (sib == NULL) {
+    return NULL; 
+  }
+  else if (node == sib -> getLeft()) {
+    return sib -> getRight(); 
+  }
+  else if (node == sib-> getRight()) {
+    return sib -> getLeft();
+  }
+}
+
+void O0(Node *&root, Node *node) {
+  if(node -> getParent() != NULL) {
+    O1(root, node); 
+  }
+}
+
+void O1(Node *&root, Node *node) {
+  Node* sib = GETS(node);
+  if (sib -> getColor() == 1) {
+    node -> getParent() -> setColor(1);
+    sib -> setColor(2);
+    if (node == node -> getParent() -> getLeft()) {
+      RLEFT(root, node -> getParent()); 
+    }
+    else {
+      RRIGHT(root, node -> getParent()); 
+     }
+  }
+  O2(root, node); 
+}
+
+void O2(Node *&root, Node *node) {
+  Node* sib = GETS(node);
+  if ((node-> getParent() -> getColor() == 2) && (sib -> getColor() == 2) && (sib -> getLeft() == NULL || sib -> getLeft() -> getColor() == 2) && (sib -> getRight() == NULL || sib -> getRight() -> getColor() == 2)) {
+    sib -> setColor(1);
+    O0(root, node -> getParent()); 
+  }
+  else {
+    O3(root, node); 
+  }
+}
+
+void O3(Node *&root, Node *node) {
+  Node* sib = GETS(node);
+  if ((node -> getParent() -> getColor() == 1) && (sib -> getColor() == 2) && (sib -> getLeft() == NULL || sib -> getLeft() -> getColor()==2) && (sib -> getRight() == NULL || sib -> getRight() -> getColor() ==2)) {
+    sib -> setColor(1);
+    node -> getParent() -> setColor(2); 
+  }
+  else {
+    O4(root, node); 
+  }
+}
+
+void O4(Node *&root, Node *node) {
+  Node* sib = GETS(node);
+  if (sib -> getColor() == 2) {
+    if ((node == node -> getParent() -> getLeft()) && (sib -> getRight() == NULL || sib -> getRight() -> getColor() == 2) && (sib -> getLeft() != NULL && sib -> getLeft() -> getColor() == 1)) {
+    sib -> setColor(1);
+    sib -> getLeft() -> setColor(2);
+    RRIGHT(root, sib); 
+    }
+    else if ((node == node -> getParent() -> getRight()) && (sib -> getLeft() == NULL || sib -> getLeft() -> getColor() == 2) && (sib -> getRight() != NULL && sib -> getRight() -> getColor() == 1)) {
+      sib -> setColor(1);
+      sib -> getRight() -> setColor(2);
+      RLEFT(root, sib); 
+    }
+  }
+  O5(root, sib);
+}
+
+void O5(Node *&root, Node *node) {
+  Node* sib = GETS(node);
+  sib -> setColor(node -> getParent() -> getColor());
+  node -> getParent() -> setColor(2);
+  if (node == node -> getParent() -> getLeft()) {
+    sib -> getRight() -> setColor(2);
+    RLEFT(root, node -> getParent()); 
+  }
+  else {
+    sib -> getRight() -> setColor(2);
+    RLEFT(root, node -> getParent()); 
+  }
+}
+
+
 Node* FIND(Node* root, int number) {
   if (root -> getData() == number) {
     return root; 
@@ -265,9 +361,78 @@ Node* FIND(Node* root, int number) {
   return NULL; 
 }
 
+void REPLACE(Node *&node, Node *child) {
+  if (node -> getParent() != NULL) {
+  child -> setParent(node -> getParent());
+  if (node == node -> getParent() -> getLeft()) {
+    node -> getParent() -> setLeft(child);  
+  }
+  else {
+    node -> getParent() -> setRight(child);     
+  }
+}
+ else {
+   node -> setData(child -> getData());
+   node -> setLeft(child -> getLeft());
+   node -> setRight(child -> getRight()); 
+ }
+}
+
 void DELETE(Node*& root, int number) {
-  if (search(root, number) == false) {
+  if (SEARCH(root, number) == false) {
     cout << "There is not this number in the tree";
     return; 
 }
- 
+  Node* deleteN = FIND(root, number);
+
+  if (deleteN == NULL) {
+    return; 
+  }
+
+  if (deleteN -> getLeft() != NULL && deleteN -> getRight() != NULL) {
+    Node* successor = deleteN -> getRight();
+    while (successor -> getLeft() != NULL) {
+      successor = successor -> getLeft(); 
+    }
+    deleteN -> setData(successor -> getData());
+    deleteN = successor; 
+  }
+  if (deleteN -> getColor() == 1) {
+    if(deleteN -> getParent() != NULL) {
+      if (deleteN -> getParent() -> getLeft() == deleteN) {
+	deleteN -> getParent() -> setLeft(NULL);
+      }
+      else {
+        deleteN -> getParent() -> setRight(NULL); 
+      }
+    }
+      else {
+
+      }
+    }
+    else if (deleteN -> getLeft() != NULL) {
+      deleteN -> getLeft() -> setColor(2);
+      REPLACE(deleteN, deleteN -> getLeft());  
+    }
+    else if (deleteN -> getRight() != NULL) {
+      deleteN -> getRight() -> setColor(2);
+      REPLACE(deleteN, deleteN -> getRight()); 
+    }
+    else {
+      if (root == deleteN) {
+	root = NULL; 
+      }
+      else {
+	O0(root, deleteN); 
+	if (deleteN -> getParent() -> getLeft() == deleteN) {
+	  deleteN -> getParent() -> setLeft(NULL); 
+	}
+	else {
+          deleteN -> getParent() -> setRight(NULL); 
+	}
+      }
+    }
+      return; 
+  
+}
+
